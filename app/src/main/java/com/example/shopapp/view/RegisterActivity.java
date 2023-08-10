@@ -52,7 +52,7 @@ public class RegisterActivity extends AppCompatActivity {
                             Toast.makeText(RegisterActivity.this, "Đăng ký thành công!", Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(RegisterActivity.this,LoginActivity.class);
                             startActivity(intent);
-
+                            finish();
                             // You can navigate to another activity here
                         } else {
                             Log.e("RegisterActivity", "User registration failed: " + apiResponse.getMessage());

@@ -95,7 +95,7 @@ public class UserListActivity extends AppCompatActivity {
             dialog.show();
         });
 
-        // Thêm FAB vào layout
+        // Create FAB vào layout
         CoordinatorLayout.LayoutParams layoutParams = new CoordinatorLayout.LayoutParams(
                 CoordinatorLayout.LayoutParams.WRAP_CONTENT,
                 CoordinatorLayout.LayoutParams.WRAP_CONTENT
