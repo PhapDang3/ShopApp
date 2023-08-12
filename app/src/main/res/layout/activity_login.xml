@@ -79,11 +79,15 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:minHeight="48dp"
+        android:minWidth="48dp"
         android:padding="8dp"
         android:textSize="14dp"
         android:id="@+id/tvSignUp"
         android:textColor="@color/purple_500"
         android:layout_marginBottom="20dp"
-        android:text="Not yet registered? SignUp Now"/>
+        android:text="Not yet registered? SignUp Now"
+        android:contentDescription="Sign up for a new account"
+        />
 
 </LinearLayout>

@@ -25,6 +25,7 @@ import com.example.shopapp.viewmodel.UserViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class UserListActivity extends AppCompatActivity {
     private UserViewModel viewModel;
@@ -46,8 +47,9 @@ public class UserListActivity extends AppCompatActivity {
 
 
         // Observe LiveData from ViewModel
-        viewModel.getUsersLiveData().observe(this, users -> {
+        viewModel.getUsersLiveData().observe(this, apiResponse -> {
             // Update UI with the list of users
+            List<User> users = apiResponse.getData();
             adapter.setUsers(users);
             adapter.notifyDataSetChanged();
             // For example, populate a RecyclerView with the data

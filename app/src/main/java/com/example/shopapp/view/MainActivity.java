@@ -1,7 +1,9 @@
 package com.example.shopapp.view;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -27,6 +29,9 @@ public class MainActivity extends AppCompatActivity {
                     .replace(R.id.fragment_container, new HomeFragment())
                     .commit();
         }
+
+
+
         bottomNav.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -49,16 +54,6 @@ public class MainActivity extends AppCompatActivity {
                 } else if (itemId == R.id.nav_notifications) {
                     // TODO: Handle search action
                     if (savedInstanceState == null) {
-//                        // Khởi tạo FragmentManager và FragmentTransaction
-//                        FragmentManager fragmentManager = getSupportFragmentManager();
-//                        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-//
-//                        // Thay thế FrameLayout
-//                        NotificationsFragment notificationsFragment = new NotificationsFragment();
-//                        fragmentTransaction.replace(R.id.fragment_container, notificationsFragment);
-//
-//                        // Hoàn thành giao dịch
-//                        fragmentTransaction.commit();
                         getSupportFragmentManager().beginTransaction()
                                 .replace(R.id.fragment_container, new NotificationsFragment())
                                 .commit();

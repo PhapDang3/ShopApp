@@ -18,16 +18,16 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class UserViewModel extends ViewModel {
-    private static final String TAG = "UserViewModel";
+
 
     private UserRepository userRepository;
 
-    private MutableLiveData<List<User>> usersLiveData = new MutableLiveData<>();
+    private MutableLiveData<ApiResponse<List<User>>> usersLiveData = new MutableLiveData<>();
     public UserViewModel() {
         userRepository = new UserRepository();
     }
 
-    public LiveData<List<User>> getUsersLiveData() {
+    public LiveData<ApiResponse<List<User>>> getUsersLiveData() {
         return usersLiveData;
     }
 
@@ -45,7 +45,7 @@ public class UserViewModel extends ViewModel {
             @Override
             public void onResponse(Call<ApiResponse<List<User>>> call, Response<ApiResponse<List<User>>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    usersLiveData.setValue(response.body().getData());
+                    usersLiveData.setValue(response.body());
                 }
             }
 
