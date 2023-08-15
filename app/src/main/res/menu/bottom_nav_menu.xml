@@ -4,10 +4,14 @@
         android:id="@+id/nav_home"
         android:icon="@drawable/ic_baseline_home_24"
         android:title="Home"/>
-    <item
-        android:id="@+id/nav_notifications"
-        android:icon="@drawable/ic_baseline_notifications_24"
-        android:title="Thông báo"/>
+<!--    <item-->
+<!--        android:id="@+id/nav_notifications"-->
+<!--        android:icon="@drawable/ic_baseline_notifications_24"-->
+<!--        android:title="Thông báo"/>-->
+        <item
+            android:id="@+id/nav_add"
+            android:icon="@drawable/ic_add"
+            android:title="Add"/>
     <item
         android:id="@+id/nav_profile"
         android:icon="@drawable/ic_baseline_person_24"

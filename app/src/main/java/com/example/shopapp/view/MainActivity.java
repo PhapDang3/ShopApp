@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.view.MenuItem;
 
 import com.example.shopapp.R;
+import com.example.shopapp.fragment.EditProductFragment;
 import com.example.shopapp.fragment.HomeFragment;
 import com.example.shopapp.fragment.NotificationsFragment;
 import com.example.shopapp.fragment.ProfileFragment;
@@ -51,11 +52,15 @@ public class MainActivity extends AppCompatActivity {
                         fragmentTransaction.commit();
                     }
                     return true;
-                } else if (itemId == R.id.nav_notifications) {
+                } else if (itemId == R.id.nav_add) {
                     // TODO: Handle search action
                     if (savedInstanceState == null) {
+                        Bundle args = new Bundle();
+                        args.putBoolean("isEditing", false); // Đặt là false cho thêm mới
+                        EditProductFragment editProductFragment = new EditProductFragment();
+                        editProductFragment.setArguments(args);
                         getSupportFragmentManager().beginTransaction()
-                                .replace(R.id.fragment_container, new NotificationsFragment())
+                                .replace(R.id.fragment_container, editProductFragment)
                                 .commit();
                     }
                     return true;

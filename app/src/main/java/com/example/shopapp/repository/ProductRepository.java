@@ -9,10 +9,15 @@ import com.example.shopapp.api.ApiResponseCallback;
 import com.example.shopapp.api.ApiService;
 import com.example.shopapp.api.RetrofitClient;
 import com.example.shopapp.model.ApiResponse;
+import com.example.shopapp.model.Category;
 import com.example.shopapp.model.Product;
 
+import java.io.File;
 import java.util.List;
 
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -26,6 +31,7 @@ public class ProductRepository {
     }
 
     public void getAllProducts(ApiResponseCallback<List<Product>> apiResponseCallback) {
+
         Call<ApiResponse<List<Product>>> call = apiService.getAllProducts();
         call.enqueue(new Callback<ApiResponse<List<Product>>>() {
             @Override
@@ -34,9 +40,17 @@ public class ProductRepository {
                     Log.d("API_RESPONSE", "Response is successful");
                     ApiResponse<List<Product>> apiResponse = response.body();
                     if (apiResponse != null && "success".equals(apiResponse.getStatus())) {
-                        apiResponseCallback.onSuccess(apiResponse.getData());
-                        Log.d("ProductRepository", "API success: Received " + apiResponse.getData().size() + " products");
+//                        apiResponseCallback.onSuccess(apiResponse.getData());
+                        List<Product> productList = apiResponse.getData();
 
+                        Log.d("ProductRepository", "API success: Received " + apiResponse.getData().size() + " products");
+                        for (Product product : productList) {
+                            // Here, we assume that the image data is returned as a byte[] from the API
+//                            byte[] imageData = (byte[]) product.getImage();
+//                            product.setImage(imageData);
+                            byte[] imageData = product.getImage().getDataAsByteArray();
+                        }
+                        apiResponseCallback.onSuccess(productList);
                     } else {
                         Log.e("API_RESPONSE", "Network error: " + response.code());
                         apiResponseCallback.onFailure("Failed to fetch products.");
@@ -48,6 +62,7 @@ public class ProductRepository {
                     Log.e("ProductRepository", "API network error");
 
                 }
+
             }
 
             @Override
@@ -108,11 +123,17 @@ public class ProductRepository {
     }
 
     public void updateProduct(String productId, Product product, ApiResponseCallback<Product> apiResponseCallback) {
+        if (productId == null || product == null) {
+            apiResponseCallback.onFailure("ID sản phẩm hoặc thông tin sản phẩm không được để trống.");
+            return;
+        }
+        Log.d("ProductRepository", "Updating product with ID " + productId + " and data: " + product.toString());
         // ... Implementation for updateProduct ...
         Call<ApiResponse<Product>> call = apiService.updateProduct(productId, product);
         call.enqueue(new Callback<ApiResponse<Product>>() {
             @Override
             public void onResponse(Call<ApiResponse<Product>> call, Response<ApiResponse<Product>> response) {
+                Log.d("ProductRepository", "Response from server: " + response.body());
                 if (response.isSuccessful()) {
                     ApiResponse<Product> apiResponse = response.body();
                     if (apiResponse != null && "success".equals(apiResponse.getStatus())) {
@@ -121,19 +142,53 @@ public class ProductRepository {
                         apiResponseCallback.onFailure("Failed to update product.");
                     }
                 } else {
+                    Log.e("ProductRepository", "Response error: " + response.code() + " " + response.message());
                     apiResponseCallback.onFailure("Network error.");
                 }
             }
 
             @Override
             public void onFailure(Call<ApiResponse<Product>> call, Throwable t) {
+                Log.e("ProductRepository", "Request failed: " + t.getMessage());
                 apiResponseCallback.onFailure("Network error: " + t.getMessage());
+
+            }
+        });
+    }
+    public void uploadProductImage(String productId, File imageFile, ApiResponseCallback<Product> callback) {
+        // Convert the file to a RequestBody for uploading
+        RequestBody requestBody = RequestBody.create(MediaType.parse("image/jpeg"), imageFile);
+
+        // Convert the RequestBody to a MultipartBody.Part
+        MultipartBody.Part multipartBody = MultipartBody.Part.createFormData("image", imageFile.getName(), requestBody);
+
+        Call<ApiResponse<Product>> call = apiService.uploadProductImage(productId, multipartBody);
+
+        call.enqueue(new Callback<ApiResponse<Product>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<Product>> call, Response<ApiResponse<Product>> response) {
+                if (response.isSuccessful()) {
+                    callback.onSuccess(response.body().getData());
+                } else {
+                    callback.onFailure("Failed to upload image.");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<Product>> call, Throwable t) {
+                callback.onFailure("Network error: " + t.getMessage());
             }
         });
     }
 
+
+
     public void deleteProduct(String productId, ApiResponseCallback<Void> apiResponseCallback) {
         // ... Implementation for deleteProduct ...
+        if (productId == null) {
+            apiResponseCallback.onFailure("ID sản phẩm không được để trống.");
+            return;
+        }
         Call<ApiResponse<Void>> call = apiService.deleteProduct(productId);
         call.enqueue(new Callback<ApiResponse<Void>>() {
             @Override
@@ -157,4 +212,28 @@ public class ProductRepository {
         });
 
     }
+    public void getCategories(ApiResponseCallback<List<Category>> apiResponseCallback) {
+        Call<ApiResponse<List<Category>>> call = apiService.getCategories();
+        call.enqueue(new Callback<ApiResponse<List<Category>>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<List<Category>>> call, Response<ApiResponse<List<Category>>> response) {
+                if (response.isSuccessful()) {
+                    ApiResponse<List<Category>> apiResponse = response.body();
+                    if (apiResponse != null && "success".equals(apiResponse.getStatus())) {
+                        apiResponseCallback.onSuccess(apiResponse.getData());
+                    } else {
+                        apiResponseCallback.onFailure("Failed to fetch categories.");
+                    }
+                } else {
+                    apiResponseCallback.onFailure("Network error.");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<List<Category>>> call, Throwable t) {
+                apiResponseCallback.onFailure("Network error: " + t.getMessage());
+            }
+        });
+    }
+
 }

@@ -1,5 +1,7 @@
 package com.example.shopapp.fragment;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -19,6 +21,8 @@ import com.example.shopapp.R;
 import com.example.shopapp.apdapter.ProductAdapter;
 import com.example.shopapp.model.Product;
 import com.example.shopapp.viewmodel.ProductViewModel;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import androidx.recyclerview.widget.GridLayoutManager;
 
 import java.util.ArrayList;
@@ -41,8 +45,12 @@ public class HomeFragment extends Fragment {
 
         // Inflate the layout for this fragment
         recyclerView = view.findViewById(R.id.product_recycler_view);
+
+
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(),2));
 //        productAdapter = new ProductAdapter();
+
+
         productAdapter = new ProductAdapter(productList, new ProductAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(Product product) {
@@ -70,7 +78,7 @@ public class HomeFragment extends Fragment {
 
 
 
-        Log.d("HomeFragment", "Data received: " + productAdapter.getProductCount() + " products");
+//        Log.d("HomeFragment", "Data received: " + productAdapter.getProductCount() + " products");
         productViewModel.getAllProducts().observe(getViewLifecycleOwner(), this::onProductsReceived);
 
         return view;
@@ -85,4 +93,18 @@ public class HomeFragment extends Fragment {
 
         // Khởi tạo và thiết lập các thành phần UI tại đây (nếu cần)
     }
+    @Override
+    public void onResume() {
+        super.onResume();
+        SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
+        boolean dataChanged = sharedPref.getBoolean("dataChanged", false);
+        if (dataChanged) {
+            productViewModel.fetchAllProducts();  // Refresh data
+            SharedPreferences.Editor editor = sharedPref.edit();
+            editor.putBoolean("dataChanged", false);
+            editor.apply();
+        }
+    }
+
+
 }

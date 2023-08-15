@@ -1,5 +1,7 @@
 package com.example.shopapp.apdapter;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,7 +26,9 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         this.products = products;
         this.listener = listener;
     }
-
+    public Bitmap convertBufferToBitmap(byte[] imageBuffer) {
+        return BitmapFactory.decodeByteArray(imageBuffer, 0, imageBuffer.length);
+    }
     @NonNull
     @Override
     public ProductAdapter.ProductViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -44,9 +48,22 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
             }
         });
         // Using Glide to load the image
-        Glide.with(holder.productImage.getContext())
-                .load(product.getImage())
-                .into(holder.productImage);
+//        Glide.with(holder.productImage.getContext())
+//                .load(product.getImage())
+//                .into(holder.productImage);
+        // Convert image buffer to Bitmap and set to ImageView
+        byte[] imageData = getImageBuffer(product);
+        if (imageData != null) {
+            Bitmap bitmap = convertBufferToBitmap(imageData);
+            holder.productImage.setImageBitmap(bitmap);
+        }
+    }
+
+    private byte[] getImageBuffer(Product product) {
+        if (product != null && product.getImage() != null) {
+            return product.getImage().getDataAsByteArray();
+        }
+        return null;
     }
 
     @Override
