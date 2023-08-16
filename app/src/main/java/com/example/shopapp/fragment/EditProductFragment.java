@@ -141,7 +141,7 @@ public class EditProductFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 // isEditing
-                if (!isEditing) {
+                if (isEditing) {
                     onSaveButtonClicked();
 //                    onUpdateProductClicked();
                 } else {
