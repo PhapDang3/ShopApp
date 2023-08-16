@@ -94,7 +94,7 @@ public class EditProductFragment extends Fragment {
         if (getArguments() != null) {
             productToEdit = getArguments().getParcelable("product_to_edit");
             Log.d("EditProductFragment", "Received product data from Bundle: " + productToEdit);
-            Log.d("EditProductFragment", "Received product productToEdit.getImage(): " + productToEdit.getImage());
+//            Log.d("EditProductFragment", "Received product productToEdit.getImage(): " + productToEdit.getImage());
 
         }
         if (productToEdit != null && productToEdit.getImage() != null) {
@@ -143,7 +143,7 @@ public class EditProductFragment extends Fragment {
                 // isEditing
                 if (!isEditing) {
                     onSaveButtonClicked();
-                    onUpdateProductClicked();
+//                    onUpdateProductClicked();
                 } else {
                     onAddProductClicked();
                 }
@@ -242,11 +242,11 @@ public class EditProductFragment extends Fragment {
         }
 
         }
-        Log.d("EditProductFragment", "Product ID: " + productToEdit.getId());
-        Log.d("EditProductFragment", "Product Name: " + productToEdit.getName());
-        Log.d("EditProductFragment", "Product Price: " + productToEdit.getPrice());
-        Log.d("EditProductFragment", "Product Description: " + productToEdit.getDescription());
-        Log.d("EditProductFragment", "Product Image: " + productToEdit.getImage());
+//        Log.d("EditProductFragment", "Product ID: " + productToEdit.getId());
+//        Log.d("EditProductFragment", "Product Name: " + productToEdit.getName());
+//        Log.d("EditProductFragment", "Product Price: " + productToEdit.getPrice());
+//        Log.d("EditProductFragment", "Product Description: " + productToEdit.getDescription());
+//        Log.d("EditProductFragment", "Product Image: " + productToEdit.getImage());
         productViewModel.updateProduct(productToEdit.getId(), productToEdit, new ApiResponseCallback<Product>() {
             @Override
             public void onSuccess(Product updatedProduct) {
