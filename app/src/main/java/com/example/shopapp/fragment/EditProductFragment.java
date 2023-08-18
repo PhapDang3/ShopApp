@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.provider.MediaStore;
@@ -142,8 +143,7 @@ public class EditProductFragment extends Fragment {
             public void onClick(View v) {
                 // isEditing
                 if (isEditing) {
-                    onSaveButtonClicked();
-//                    onUpdateProductClicked();
+                    onUpdateProductClicked();
                 } else {
                     onAddProductClicked();
                 }
@@ -187,7 +187,6 @@ public class EditProductFragment extends Fragment {
                 bufferData.add((int) b & 0xFF);  // Convert byte to unsigned int and add to the list
             }
             productImage.setData(bufferData);
-            productImage.setData(bufferData);
             newProduct.setImage(productImage);
         }
 
@@ -195,178 +194,126 @@ public class EditProductFragment extends Fragment {
         productViewModel.createProduct(newProduct, new ApiResponseCallback<Product>() {
             @Override
             public void onSuccess(Product createdProduct) {
+                navigateToHomeScreen();
                 Toast.makeText(getContext(), "Product added successfully!", Toast.LENGTH_SHORT).show();
-                // TODO: Navigate back to product list or clear all fields for adding another product.
+
             }
 
             @Override
             public void onFailure(String errorMessage) {
+                Log.d("Add product","Failed to add product"+errorMessage);
                 Toast.makeText(getContext(), "Failed to add product: " + errorMessage, Toast.LENGTH_SHORT).show();
             }
         });
     }
 
+//    public void onUpdateProductClicked() {
+//        String productName = edProductName.getText().toString().trim();
+//        String productDescription = edProductDescription.getText().toString().trim();
+//        String productPrice = edProductPrice.getText().toString().trim();
+//        Category selectedCategory = (Category) spCategory.getSelectedItem();
+//
+//        if (TextUtils.isEmpty(productName) || TextUtils.isEmpty(productDescription) || TextUtils.isEmpty(productPrice) || selectedCategory == null) {
+//            Toast.makeText(getContext(), "All fields are required!", Toast.LENGTH_SHORT).show();
+//            return;
+//        }
+//
+////        Product updatedProduct = new Product();
+////        updatedProduct.setName(productName);
+////        updatedProduct.setPrice(Double.parseDouble(productPrice));
+////        updatedProduct.setDescription(productDescription);
+////        updatedProduct.setCategory(selectedCategory);
+//        if (productToEdit != null) {
+//            productToEdit.setName(productName);
+//            productToEdit.setPrice(Double.parseDouble(productPrice));
+//            productToEdit.setDescription(productDescription);
+//            productToEdit.setCategory(selectedCategory);
+//        if (selectedImageUri != null) {
+//            byte[] imageData = convertUriToByteArray(selectedImageUri);
+//            Product.Image productImage = new Product.Image();
+//            List<Integer> bufferData = new ArrayList<>();
+//            for (byte b : imageData) {
+//                bufferData.add((int) b & 0xFF);  // Convert byte to unsigned int and add to the list
+//            }
+//            productImage.setData(bufferData);
+//            productToEdit.setImage(productImage);
+//        }else {
+//            productToEdit.setImage(null);
+//        }
+//
+//        }
+////        Log.d("EditProductFragment", "Product ID: " + productToEdit.getId());
+////        Log.d("EditProductFragment", "Product Name: " + productToEdit.getName());
+////        Log.d("EditProductFragment", "Product Price: " + productToEdit.getPrice());
+////        Log.d("EditProductFragment", "Product Description: " + productToEdit.getDescription());
+////        Log.d("EditProductFragment", "Product Image: " + productToEdit.getImage());
+//        productViewModel.updateProduct(productToEdit.getId(), productToEdit, new ApiResponseCallback<Product>() {
+//            @Override
+//            public void onSuccess(Product updatedProduct) {
+//                Toast.makeText(getContext(), "Product updated successfully!", Toast.LENGTH_SHORT).show();
+//                navigateToHomeScreen();
+//
+//                // TODO: Navigate back to product list or do other actions.
+//            }
+//
+//            @Override
+//            public void onFailure(String errorMessage) {
+//                Log.d("Update product","Failed to update product" +errorMessage);
+//                Toast.makeText(getContext(), "Failed to update product: " + errorMessage, Toast.LENGTH_SHORT).show();
+//            }
+//        });
+//    }
     public void onUpdateProductClicked() {
         String productName = edProductName.getText().toString().trim();
         String productDescription = edProductDescription.getText().toString().trim();
         String productPrice = edProductPrice.getText().toString().trim();
         Category selectedCategory = (Category) spCategory.getSelectedItem();
 
-        if (TextUtils.isEmpty(productName) || TextUtils.isEmpty(productDescription) || TextUtils.isEmpty(productPrice) || selectedCategory == null) {
-            Toast.makeText(getContext(), "All fields are required!", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-//        Product updatedProduct = new Product();
-//        updatedProduct.setName(productName);
-//        updatedProduct.setPrice(Double.parseDouble(productPrice));
-//        updatedProduct.setDescription(productDescription);
-//        updatedProduct.setCategory(selectedCategory);
-        if (productToEdit != null) {
-            productToEdit.setName(productName);
-            productToEdit.setPrice(Double.parseDouble(productPrice));
-            productToEdit.setDescription(productDescription);
-            productToEdit.setCategory(selectedCategory);
-
-        if (selectedImageUri != null) {
-            byte[] imageData = convertUriToByteArray(selectedImageUri);
-            Product.Image productImage = new Product.Image();
-            List<Integer> bufferData = new ArrayList<>();
-            for (byte b : imageData) {
-                bufferData.add((int) b & 0xFF);  // Convert byte to unsigned int and add to the list
-            }
-            productImage.setData(bufferData);
-            productToEdit.setImage(productImage);
-        }else {
-            productToEdit.setImage(null);
-        }
-
-        }
-//        Log.d("EditProductFragment", "Product ID: " + productToEdit.getId());
-//        Log.d("EditProductFragment", "Product Name: " + productToEdit.getName());
-//        Log.d("EditProductFragment", "Product Price: " + productToEdit.getPrice());
-//        Log.d("EditProductFragment", "Product Description: " + productToEdit.getDescription());
-//        Log.d("EditProductFragment", "Product Image: " + productToEdit.getImage());
-        productViewModel.updateProduct(productToEdit.getId(), productToEdit, new ApiResponseCallback<Product>() {
-            @Override
-            public void onSuccess(Product updatedProduct) {
-                Toast.makeText(getContext(), "Product updated successfully!", Toast.LENGTH_SHORT).show();
-                // TODO: Navigate back to product list or do other actions.
-            }
-
-            @Override
-            public void onFailure(String errorMessage) {
-                Toast.makeText(getContext(), "Failed to update product: " + errorMessage, Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-    public void onSaveButtonClicked() {
-        String productName = edProductName.getText().toString().trim();
-        String productDescription = edProductDescription.getText().toString().trim();
-        String productPrice = edProductPrice.getText().toString().trim();
-        Category selectedCategory = (Category) spCategory.getSelectedItem();
-
-        if (TextUtils.isEmpty(productName) || TextUtils.isEmpty(productDescription) || TextUtils.isEmpty(productPrice) || selectedCategory == null) {
-            Toast.makeText(getContext(), "All fields are required!", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        Product updatedProduct = new Product();
-        updatedProduct.setName(productName);
-        updatedProduct.setPrice(Double.parseDouble(productPrice));
-        updatedProduct.setDescription(productDescription);
-        updatedProduct.setCategory(selectedCategory);
         Log.d("EditProductFragment", "Product Name: " + productName);
         Log.d("EditProductFragment", "Product Price: " + productPrice);
         Log.d("EditProductFragment", "Product Description: " + productDescription);
         Log.d("EditProductFragment", "Selected Category: " + selectedCategory);
         Log.d("EditProductFragment", "Selected Image URI: " + selectedImageUri);
 
+        if (TextUtils.isEmpty(productName) || TextUtils.isEmpty(productPrice) || selectedCategory == null) {
+            Toast.makeText(getContext(), "All fields are required!", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
-        if (isEditing) {
+        if (productToEdit != null) {
+            productToEdit.setName(productName);
+            productToEdit.setPrice(Double.parseDouble(productPrice));
+            productToEdit.setDescription(productDescription);
+            productToEdit.setCategory(selectedCategory);
             if (selectedImageUri != null) {
-                File imageFile = new File(selectedImageUri.getPath());
-                productViewModel.uploadProductImage(productToEdit.getId(), imageFile, new ApiResponseCallback<Product>() {
-                    @Override
-                    public void onSuccess(Product product) {
-                        // Update the product details after the image upload
-                        productViewModel.updateProduct(productToEdit.getId(), updatedProduct, new ApiResponseCallback<Product>() {
-                            @Override
-                            public void onSuccess(Product updatedProduct) {
-                                Toast.makeText(getContext(), "Product updated successfully!", Toast.LENGTH_SHORT).show();
-                                // TODO: Navigate back to product list or do other actions.
-                            }
-
-                            @Override
-                            public void onFailure(String errorMessage) {
-                                Toast.makeText(getContext(), "Failed to update product: " + errorMessage, Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void onFailure(String errorMessage) {
-                        // Handle image upload failure
-                        Toast.makeText(getContext(), "Failed to upload image: " + errorMessage, Toast.LENGTH_SHORT).show();
-                    }
-                });
+                byte[] imageData = convertUriToByteArray(selectedImageUri);
+                Product.Image productImage = new Product.Image();
+                List<Integer> bufferData = new ArrayList<>();
+                for (byte b : imageData) {
+                    bufferData.add((int) b & 0xFF);  // Convert byte to unsigned int and add to the list
+                }
+                productImage.setData(bufferData);
+                productToEdit.setImage(productImage);
             } else {
-                productViewModel.updateProduct(productToEdit.getId(), updatedProduct, new ApiResponseCallback<Product>() {
-                    @Override
-                    public void onSuccess(Product updatedProduct) {
-                        Toast.makeText(getContext(), "Product updated successfully!", Toast.LENGTH_SHORT).show();
-                        // TODO: Navigate back to product list or do other actions.
-                    }
-
-                    @Override
-                    public void onFailure(String errorMessage) {
-                        Toast.makeText(getContext(), "Failed to update product: " + errorMessage, Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-        } else {
-            // Handle product creation (similar to update but using the createProduct method)
-            if (selectedImageUri != null) {
-                File imageFile = new File(selectedImageUri.getPath());
-                productViewModel.uploadProductImage(null, imageFile, new ApiResponseCallback<Product>() {
-                    @Override
-                    public void onSuccess(Product product) {
-                        // Handle success of the image upload
-                        productViewModel.createProduct(updatedProduct, new ApiResponseCallback<Product>() {
-                            @Override
-                            public void onSuccess(Product createdProduct) {
-                                Toast.makeText(getContext(), "Product created successfully!", Toast.LENGTH_SHORT).show();
-                                // TODO: Navigate back to product list or do other actions.
-                            }
-
-                            @Override
-                            public void onFailure(String errorMessage) {
-                                Toast.makeText(getContext(), "Failed to create product: " + errorMessage, Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void onFailure(String errorMessage) {
-                        // Handle image upload failure
-                        Toast.makeText(getContext(), "Failed to upload image: " + errorMessage, Toast.LENGTH_SHORT).show();
-                    }
-                });
-            } else {
-                productViewModel.createProduct(updatedProduct, new ApiResponseCallback<Product>() {
-                    @Override
-                    public void onSuccess(Product createdProduct) {
-                        Toast.makeText(getContext(), "Product created successfully!", Toast.LENGTH_SHORT).show();
-                        // TODO: Navigate back to product list or do other actions.
-                    }
-
-                    @Override
-                    public void onFailure(String errorMessage) {
-                        Toast.makeText(getContext(), "Failed to create product: " + errorMessage, Toast.LENGTH_SHORT).show();
-                    }
-                });
+                productToEdit.setImage(null);
             }
         }
+
+        productViewModel.updateProduct(productToEdit.getId(), productToEdit, new ApiResponseCallback<Product>() {
+            @Override
+            public void onSuccess(Product updatedProduct) {
+                navigateToHomeScreen();
+                Toast.makeText(getContext(), "Product updated successfully!", Toast.LENGTH_SHORT).show();
+
+                // TODO: Navigate back to product list or do other actions.
+            }
+
+            @Override
+            public void onFailure(String errorMessage) {
+                Log.d("Update product", "Failed to update product" + errorMessage);
+                Toast.makeText(getContext(), "Failed to update product: " + errorMessage, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private byte[] convertUriToByteArray(Uri imageUri) {
@@ -403,6 +350,11 @@ public class EditProductFragment extends Fragment {
             productImgObject.setDataAsByteArray(selectedImageBuffer);
 
         }
+    }
+    private void navigateToHomeScreen() {
+        // Navigate back to the HomeFragment
+        FragmentManager fragmentManager = requireActivity().getSupportFragmentManager();
+        fragmentManager.popBackStack();
     }
 
 }

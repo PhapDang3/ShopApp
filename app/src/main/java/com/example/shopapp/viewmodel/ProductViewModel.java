@@ -69,6 +69,7 @@ public class ProductViewModel extends ViewModel {
 
             @Override
             public void onFailure(String errorMessage) {
+                Log.d("Add product","Failed to add product"+errorMessage);
                 callback.onFailure(errorMessage);
             }
         });
